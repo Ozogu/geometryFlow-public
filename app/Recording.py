@@ -11,6 +11,7 @@ from sendInput import KEY_MAP
 
 # Constants
 DEBUG_DELAY = False
+DEBUG_PRESSED_KEYS = True
 KEYS = list(KEY_MAP.keys())
 
 def pressedKeys():
@@ -24,12 +25,11 @@ def main():
 	windowHandle = win32gui.FindWindow(None, r'Geometry WArs: Retro Evolved')
 	if not windowHandle:
 		print('Window not found, returning.')
-		return
 
 	sct = mss()
 	window = {'left': 0, 'top': 0, 'width': 800, 'height': 600}
 	# Make sure the window is right size and position as both can vary.
-	win32gui.MoveWindow(windowHandle, 0, 0, 800, 600, True)
+	if windowHandle: win32gui.MoveWindow(windowHandle, 0, 0, 800, 600, True)
 
 	print('Recording!')
 	# Debugging delay 
@@ -40,12 +40,14 @@ def main():
 			print("delay " + str(now-last_time))
 			last_time = now
 
-		print(pressedKeys())
+		pressed = pressedKeys()
+		if DEBUG_PRESSED_KEYS: print(pressed)
+		
 		sct_img = sct.grab(window)
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 		cv2.imshow('Q to quit!', np.array(img))
 		if cv2.waitKey(25) & 0xFF == ord('q'):
 			cv2.destroyAllWindows()
 			break
-			
+
 main()
