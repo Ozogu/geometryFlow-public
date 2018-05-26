@@ -11,10 +11,11 @@ KEY_MAP = {
     's': 0x1F,
     'd': 0x20,
     'd': 0x20,
-    'upArrow': 0xC8,
-    'leftArrow': 0xCB,
-    'rightArrow': 0xCD,
-    'downArrow': 0xD0
+    'up': 0xC8,
+    'left': 0xCB,
+    'right': 0xCD,
+    'down': 0xD0,
+    'space': 0x39
 }
 
 SendInput = ctypes.windll.user32.SendInput
