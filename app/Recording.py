@@ -23,7 +23,8 @@ keys.remove('enter')
 def pressedKeys():
 	pressed = []
 	for k in keys:
-		if keyboard.is_pressed(k): pressed.append(k)
+		if keyboard.is_pressed(k):
+			pressed.append(k)
 
 	return pressed
 
@@ -42,29 +43,28 @@ def processImage(img):
 	return img
 
 def main():
-	f = ""
-	windowHandle = win32gui.FindWindow(None, r'Geometry WArs: Retro Evolved')
-	if not windowHandle:
-		print('Window not found, returning.')
-
-	sct = mss()
-	window = {'left': 0, 'top': 0, 'width': 800, 'height': 600}
-	if windowHandle:
-		# Make sure the window is right size and position as both can vary.
-		win32gui.MoveWindow(windowHandle, 0, 0, 800, 600, True)
-
-		now = datetime.now().strftime("%Y%m%d%H%M%S")
-		# Get current path, remove 'app' folder from it. Now we have root.
-		root = '\\'.join(os.path.abspath(os.curdir).split('\\')[0:-1])
-		filepath = f"{root}\\data\\gameData-{now}.png"
-		# Create file to data folder
-		f = open(filepath,"w+")
-
-	print('Recording!')
 	# Debugging delay 
 	last_time = time.time()
 	index = 0
 	data = ""
+	f = ""
+	sct = mss()
+	window = {'left': 0, 'top': 0, 'width': 800, 'height': 600}
+	windowHandle = win32gui.FindWindow(None, r'Geometry WArs: Retro Evolved')
+	now = datetime.now().strftime("%Y%m%d%H%M%S")
+	# Get current path, remove 'app' folder from it. Now we have root.
+	root = '\\'.join(os.path.abspath(os.curdir).split('\\')[0:-1])
+	filepath = f"{root}\\data\\gameData-{now}.txt"
+	# Create file to data folder
+	# f = open(filepath,"w+")
+
+	if windowHandle:
+		# Make sure the window is right size and position as both can vary.
+		win32gui.MoveWindow(windowHandle, 0, 0, 800, 600, True)
+	else:
+		print('Window not found.')
+
+	print('Recording!')
 	while 1:
 		index += 1
 		if DEBUG_DELAY:
@@ -73,28 +73,18 @@ def main():
 			last_time = now
 
 		pressed = pressedKeys()
-		if DEBUG_PRESSED_KEYS: print(pressed)
+		if DEBUG_PRESSED_KEYS:
+			print(pressed)
 		
 		sct_img = sct.grab(window)
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 		img = processImage(img)
-		## TODO: cv2.imwrite alot faster than file.write??
-		cv2.imwrite(filepath,img)
-		# img_raw = str(img.ravel())
-		# keyboard = ",".join(pressed)
-		# data += f"{img_raw};{keyboard}"
-		# print(img)
-		if index > 4000 and windowHandle:
-			writeFile(f, data)
-			data = ""
-			index = 0
+		# img.tofile(filepath, format='%4d', sep=",")
 
 		cv2.imshow('Q to quit!', img)
 		if cv2.waitKey(25) & 0xFF == ord('q'):
 			cv2.destroyAllWindows()
-			if windowHandle:
-				f.close()
-
+			# f.close()
 			break
 
 main()
