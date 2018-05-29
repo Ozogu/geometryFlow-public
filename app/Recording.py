@@ -9,7 +9,7 @@ from datetime import datetime
 import keyboard
 import os
 
-from sendInput import LEFT_PAD, RIGHT_PAD, keypress2vector, NO_INPUT
+from send_input import LEFT_PAD, RIGHT_PAD, keypress2vector, NO_INPUT
 
 # Constants
 np.set_printoptions(threshold=np.nan)
@@ -17,7 +17,7 @@ DEBUG_DELAY = False
 DEBUG_PRESSED_KEYS = False
 
 
-def processImage(img):
+def process_image(img):
 	# To grayscale
 	img = cv2.cvtColor(np.array(img, dtype = np.uint8), cv2.COLOR_BGR2GRAY)
 	# To binary
@@ -31,7 +31,7 @@ def processImage(img):
 
 	return img
 
-def saveData(images, keyboardInputs):
+def save_data(images, keyboardInputs):
 	now = datetime.now().strftime("%Y%m%d%H%M%S")
 	# Get current path, remove 'app' folder from it. Now we have root.
 	root = '\\'.join(os.path.abspath(os.curdir).split('\\')[0:-1])
@@ -90,17 +90,18 @@ def main():
 			last_time = now
 
 		# Captures any keyboard input
+		# TODO: No bomb in inputs yet
 		inputs = capture_input()
 
 		sct_img = sct.grab(window)
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
-		img = processImage(img)
+		img = process_image(img)
 		images.append(img)
 
 		cv2.imshow('Q to quit!', img)
 		if cv2.waitKey(25) & 0xFF == ord('q'):
 			cv2.destroyAllWindows()
-			saveData(images, inputs)
+			save_data(images, inputs)
 			break
 
 main()
