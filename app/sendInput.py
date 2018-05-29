@@ -20,6 +20,7 @@ KEY_MAP = {
     'space': 0x39
 }
 
+# Direction for left pad. Dictionary keys are order sensitive!
 LEFT_PAD = dict(
     w='top',
     s='bottom',
@@ -31,6 +32,7 @@ LEFT_PAD = dict(
     wa='top_left',
 )
 
+# Direction for right pad. Dictionary keys are order sensitive!
 RIGHT_PAD = dict(
     up='top',
     down='bottom',
@@ -43,29 +45,26 @@ RIGHT_PAD = dict(
     )
 
 
+# Input vectors for NN
 VECTORS = dict(
-    #   t tr  r br  b bl  l tl
-	top=(1, 0, 0, 0, 0, 0, 0, 0),
-	bottom=(0, 0, 0, 0, 1, 0, 0, 0),
-	left=(0, 0, 0, 0, 0, 0, 1, 0),
-	right=(0, 0, 1, 0, 0, 0, 0, 0),
-	top_right=(0, 1, 0, 0, 0, 0, 0, 0),
-	top_left=(0, 0, 0, 0, 0, 0, 0, 1),
+    #             t tr  r br  b bl  l tl
+	top         =(1, 0, 0, 0, 0, 0, 0, 0),
+	bottom      =(0, 0, 0, 0, 1, 0, 0, 0),
+	left        =(0, 0, 0, 0, 0, 0, 1, 0),
+	right       =(0, 0, 1, 0, 0, 0, 0, 0),
+	top_right   =(0, 1, 0, 0, 0, 0, 0, 0),
+	top_left    =(0, 0, 0, 0, 0, 0, 0, 1),
 	bottom_right=(0, 0, 0, 1, 0, 0, 0, 0),
-	bottom_left=(0, 0, 0, 0, 0, 1, 0, 0),
+	bottom_left =(0, 0, 0, 0, 0, 1, 0, 0),
 	)
 
-
-KEYS = list(KEY_MAP.keys())
-KEYS.remove('esc')
-KEYS.remove('enter')
-
 NO_INPUT = (0, 0, 0, 0, 0, 0, 0, 0)
-
 
 def keypress2vector(mapping):
     pressed = ""
 
+    # Loop only first 4 keys. Expects keys to be in certain order
+    # so that 'pressed' is built properly.
     for key in tuple(mapping.keys())[:4]:
         if keyboard.is_pressed(key):
             pressed += key

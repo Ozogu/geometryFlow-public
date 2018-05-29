@@ -31,50 +31,73 @@ def processImage(img):
 
 	return img
 
-def main():
-	# Debugging delay
-	last_time = time.time()
-	index = 0
-	data = ""
-	f = ""
-	sct = mss()
-	window = {'left': 0, 'top': 0, 'width': 800, 'height': 600}
-	windowHandle = win32gui.FindWindow(None, r'Geometry Wars: Retro Evolved')
+def saveData(images, keyboardInputs):
 	now = datetime.now().strftime("%Y%m%d%H%M%S")
 	# Get current path, remove 'app' folder from it. Now we have root.
 	root = '\\'.join(os.path.abspath(os.curdir).split('\\')[0:-1])
-	filepath = f"{root}\\data\\gameData-{now}.txt"
-	# Create file to data folder
-	# f = open(filepath,"w+")
+	img = f"{root}\\data\\images\\images-{now}"
+	keyboard = f"{root}\\data\\keyboard\\keyboard-{now}.txt"
+
+	np.savez(img, *images)
+	f = open(keyboard,"w")
+	for k in keyboardInputs:
+		if k:
+			try:
+				f.write(" ".join(sorted(k)))
+			except:
+				print(k)
+				f.write("blank")
+		else:
+			f.write("blank")
+		f.write("\n")
+
+	f.close()
+
+
+def capture_input():
+	left_ctrl = keypress2vector(LEFT_PAD)
+	right_ctrl = keypress2vector(RIGHT_PAD)
+	if left_ctrl != NO_INPUT or right_ctrl != NO_INPUT:
+		print(f'left: {left_ctrl}, right: {right_ctrl}')
+
+	return left_ctrl, right_ctrl
+
+def main():
+	# Debugging delay
+	last_time = time.time()
+	sct = mss()
+	window = {'left': 0, 'top': 0, 'width': 800, 'height': 600}
+	windowHandle = win32gui.FindWindow(None, r'Geometry WArs: Retro Evolved')
+	images = []
+	keyboardInputs = []
 
 	if windowHandle:
 		# Make sure the window is right size and position as both can vary.
 		win32gui.MoveWindow(windowHandle, 0, 0, 800, 600, True)
+		win32gui.SetForegroundWindow(windowHandle)
 	else:
 		print('Window not found.')
 
 	print('Recording!')
 	while 1:
-		index += 1
 		if DEBUG_DELAY:
 			now = time.time()
 			print("delay " + str(now-last_time))
 			last_time = now
 
-		left_ctrl = keypress2vector(LEFT_PAD)
-		right_ctrl = keypress2vector(RIGHT_PAD)
-		if left_ctrl != NO_INPUT or right_ctrl != NO_INPUT:
-			print(f'left: {left_ctrl}, right: {right_ctrl}')
+		# Captures any keyboard input
+		inputs = capture_input()
 
 		sct_img = sct.grab(window)
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 		img = processImage(img)
-		# img.tofile(filepath, format='%4d', sep=",")
+		images.append(img)
+		keyboardInputs.append(pressed)
 
 		cv2.imshow('Q to quit!', img)
 		if cv2.waitKey(25) & 0xFF == ord('q'):
 			cv2.destroyAllWindows()
-			# f.close()
+			saveData(images, keyboardInputs)
 			break
 
 main()
