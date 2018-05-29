@@ -9,24 +9,13 @@ from datetime import datetime
 import keyboard
 import os
 
-from sendInput import KEY_MAP
+from sendInput import LEFT_PAD, RIGHT_PAD, keypress2vector, NO_INPUT
 
 # Constants
 np.set_printoptions(threshold=np.nan)
-DEBUG_DELAY = True
+DEBUG_DELAY = False
 DEBUG_PRESSED_KEYS = False
 
-keys = list(KEY_MAP.keys())
-keys.remove('esc')
-keys.remove('enter')
-
-def pressedKeys():
-	pressed = []
-	for k in keys:
-		if keyboard.is_pressed(k):
-			pressed.append(k)
-
-	return pressed
 
 def processImage(img):
 	# To grayscale
@@ -43,14 +32,14 @@ def processImage(img):
 	return img
 
 def main():
-	# Debugging delay 
+	# Debugging delay
 	last_time = time.time()
 	index = 0
 	data = ""
 	f = ""
 	sct = mss()
 	window = {'left': 0, 'top': 0, 'width': 800, 'height': 600}
-	windowHandle = win32gui.FindWindow(None, r'Geometry WArs: Retro Evolved')
+	windowHandle = win32gui.FindWindow(None, r'Geometry Wars: Retro Evolved')
 	now = datetime.now().strftime("%Y%m%d%H%M%S")
 	# Get current path, remove 'app' folder from it. Now we have root.
 	root = '\\'.join(os.path.abspath(os.curdir).split('\\')[0:-1])
@@ -72,10 +61,11 @@ def main():
 			print("delay " + str(now-last_time))
 			last_time = now
 
-		pressed = pressedKeys()
-		if DEBUG_PRESSED_KEYS:
-			print(pressed)
-		
+		left_ctrl = keypress2vector(LEFT_PAD)
+		right_ctrl = keypress2vector(RIGHT_PAD)
+		if left_ctrl != NO_INPUT or right_ctrl != NO_INPUT:
+			print(f'left: {left_ctrl}, right: {right_ctrl}')
+
 		sct_img = sct.grab(window)
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 		img = processImage(img)
