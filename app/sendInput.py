@@ -4,6 +4,7 @@ import time
 
 import copy
 import keyboard
+import numpy as np
 
 # http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
 KEY_MAP = {
@@ -47,18 +48,18 @@ RIGHT_PAD = dict(
 
 # Input vectors for NN
 VECTORS = dict(
-    #             t tr  r br  b bl  l tl
-	top         =(1, 0, 0, 0, 0, 0, 0, 0),
-	bottom      =(0, 0, 0, 0, 1, 0, 0, 0),
-	left        =(0, 0, 0, 0, 0, 0, 1, 0),
-	right       =(0, 0, 1, 0, 0, 0, 0, 0),
-	top_right   =(0, 1, 0, 0, 0, 0, 0, 0),
-	top_left    =(0, 0, 0, 0, 0, 0, 0, 1),
-	bottom_right=(0, 0, 0, 1, 0, 0, 0, 0),
-	bottom_left =(0, 0, 0, 0, 0, 1, 0, 0),
+    #                     t tr  r br  b bl  l tl
+	top         =np.array((1, 0, 0, 0, 0, 0, 0, 0)),
+	bottom      =np.array((0, 0, 0, 0, 1, 0, 0, 0)),
+	left        =np.array((0, 0, 0, 0, 0, 0, 1, 0)),
+	right       =np.array((0, 0, 1, 0, 0, 0, 0, 0)),
+	top_right   =np.array((0, 1, 0, 0, 0, 0, 0, 0)),
+	top_left    =np.array((0, 0, 0, 0, 0, 0, 0, 1)),
+	bottom_right=np.array((0, 0, 0, 1, 0, 0, 0, 0)),
+	bottom_left =np.array((0, 0, 0, 0, 0, 1, 0, 0)),
 	)
 
-NO_INPUT = (0, 0, 0, 0, 0, 0, 0, 0)
+NO_INPUT = np.array((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
 def keypress2vector(mapping):
     pressed = ""
@@ -72,7 +73,7 @@ def keypress2vector(mapping):
     try:
         return VECTORS[mapping[pressed]]
     except KeyError:
-        return NO_INPUT
+        return NO_INPUT[:8]
 
 SendInput = ctypes.windll.user32.SendInput
 

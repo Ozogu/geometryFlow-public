@@ -57,13 +57,17 @@ def saveData(images, keyboardInputs):
 def capture_input():
 	left_ctrl = keypress2vector(LEFT_PAD)
 	right_ctrl = keypress2vector(RIGHT_PAD)
-	if left_ctrl != NO_INPUT or right_ctrl != NO_INPUT:
-		print(f'left: {left_ctrl}, right: {right_ctrl}')
 
-	return left_ctrl, right_ctrl
+	combined = np.append(left_ctrl, right_ctrl)
+
+	if not np.array_equal(combined, NO_INPUT):
+		print(f"Input: {combined}")
+
+	return combined
+
 
 def main():
-	# Debugging delay
+	# Debugging delayd
 	last_time = time.time()
 	sct = mss()
 	window = {'left': 0, 'top': 0, 'width': 800, 'height': 600}
@@ -92,12 +96,11 @@ def main():
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 		img = processImage(img)
 		images.append(img)
-		keyboardInputs.append(pressed)
 
 		cv2.imshow('Q to quit!', img)
 		if cv2.waitKey(25) & 0xFF == ord('q'):
 			cv2.destroyAllWindows()
-			saveData(images, keyboardInputs)
+			saveData(images, inputs)
 			break
 
 main()
