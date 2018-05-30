@@ -48,7 +48,7 @@ RIGHT_PAD = dict(
 
 # Input vectors for NN
 VECTORS = dict(
-    #                     t tr  r br  b bl  l tl
+    #                      t  tr r  br b  bl l tl
 	top         =np.array((1, 0, 0, 0, 0, 0, 0, 0)),
 	bottom      =np.array((0, 0, 0, 0, 1, 0, 0, 0)),
 	left        =np.array((0, 0, 0, 0, 0, 0, 1, 0)),
