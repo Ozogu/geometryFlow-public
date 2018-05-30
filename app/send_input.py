@@ -59,7 +59,8 @@ VECTORS = dict(
 	bottom_left =np.array((0, 0, 0, 0, 0, 1, 0, 0)),
 	)
 
-NO_INPUT = np.array((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+# Default for no input. Vector contains left pad (8), right pad (8), and bomb (1).
+NO_INPUT = np.array((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
 def keypress2vector(mapping):
     pressed = ""

@@ -10,6 +10,7 @@ import keyboard
 import os
 
 from send_input import LEFT_PAD, RIGHT_PAD, keypress2vector, NO_INPUT
+from models.simple_lstm_nn import neural_network, one2one_model
 
 # Constants
 np.set_printoptions(threshold=np.nan)
@@ -55,15 +56,54 @@ def save_data(images, keyboardInputs):
 
 
 def capture_input():
+	was_human = False
 	left_ctrl = keypress2vector(LEFT_PAD)
 	right_ctrl = keypress2vector(RIGHT_PAD)
+	bomb = 0,
 
-	combined = np.append(left_ctrl, right_ctrl)
+	combined = np.concatenate((left_ctrl, right_ctrl, bomb))
 
 	if not np.array_equal(combined, NO_INPUT):
 		print(f"Input: {combined}")
+		was_human = True
 
-	return combined
+	return combined, was_human
+
+
+class Brain:
+	def __init__(self, nn, image_buffer, controls):
+		self._nn = nn
+		self._image_buffer = image_buffer
+		self._controls = controls
+
+	@classmethod
+	def create(cls):
+		nn = neural_network(one2one_model)
+
+		return cls(nn, None, None)
+
+	def send_image(self, image):
+		self._image_buffer = image
+
+	def send_controls(self, controls):
+		self._controls = controls
+
+	def learn(self):
+		nn_input = np.append(self._controls, self._image_buffer)
+		nn_input = nn_input.reshape((1, len(nn_input)))
+
+		controls = self._controls.reshape((1, len(self._controls)))
+
+		# TODO: Maybe we should try to do predict here also
+		# FIXME: This is probably wrong. Input should not contain same controls as output.
+		#self._nn.fit(x=nn_input, y=controls, epochs=1)
+
+	def play(self):
+		return
+		nn_input = np.append(self._controls, self._image_buffer)
+
+		controls = self._nn.predict(x=nn_input)
+		print("predict:", controls)
 
 
 def main():
@@ -71,7 +111,7 @@ def main():
 	last_time = time.time()
 	sct = mss()
 	window = {'left': 0, 'top': 0, 'width': 800, 'height': 600}
-	windowHandle = win32gui.FindWindow(None, r'Geometry WArs: Retro Evolved')
+	windowHandle = win32gui.FindWindow(None, r'Geometry Wars: Retro Evolved')
 	images = []
 	keyboardInputs = []
 
@@ -82,8 +122,11 @@ def main():
 	else:
 		print('Window not found.')
 
+	print("Getting a proper mental state...")
+	brain = Brain.create()
+
 	print('Recording!')
-	while 1:
+	while True:
 		if DEBUG_DELAY:
 			now = time.time()
 			print("delay " + str(now-last_time))
@@ -91,12 +134,21 @@ def main():
 
 		# Captures any keyboard input
 		# TODO: No bomb in inputs yet
-		inputs = capture_input()
+		inputs, was_human = capture_input()
+
+		brain.send_controls(inputs)
 
 		sct_img = sct.grab(window)
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 		img = process_image(img)
 		images.append(img)
+
+		brain.send_image(img)
+
+		if was_human:
+			brain.learn()
+		else:
+			brain.play()
 
 		cv2.imshow('Q to quit!', img)
 		if cv2.waitKey(25) & 0xFF == ord('q'):

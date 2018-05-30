@@ -19,7 +19,7 @@ def one2one_model(x_n, y_n):
     @param y_n: output size for controls
     """
     # Input layer, where input size is 17 + 800 * 600
-    x = keras.layers.Input(shape=(x_n, 1))
+    x = keras.layers.Input(shape=(x_n, ))
 
     # 1st hidden layer, with less units and ReLU activation (to keep values between 0..1)
     y = keras.layers.Dense(int(x_n / 160))(x)
@@ -51,8 +51,14 @@ def many2one_lstm_model(t_x, t_y, n_a, input_size):
 
     return keras.models.Model(inputs=[x, a0], outputs=x)
 
-if __name__ == "__main__":
+def neural_network(model_func):
     input_vector_size = CONTROLS_SIZE + WINDOW_WIDTH * WINDOW_HEIGHT
 
     m = one2one_model(x_n=input_vector_size, y_n=CONTROLS_SIZE)
     m.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    return m
+
+if __name__ == "__main__":
+    nn = neural_network(one2one_model)
+    nn.summary()
