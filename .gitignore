@@ -1,1 +1,3 @@
 data
+# Models may be very large. Only force push them
+app/models/*.pkl
