@@ -16,7 +16,7 @@ clf = SVC()
 
 lb.fit(keyboards)
 keyboards = lb.fit_transform(keyboards)
-classes = lb.classes_
+np.save('svm_classes.npy', lb.classes_)
 
 nsamples, nx, ny = images.shape
 # Rewrite original to optimize memory usage

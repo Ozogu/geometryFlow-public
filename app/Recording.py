@@ -7,9 +7,12 @@ import win32gui
 import time
 from datetime import datetime
 import keyboard
-import os
+import os, sys
 
-from send_input import LEFT_PAD, RIGHT_PAD, keypress2vector, NO_INPUT
+# Path hack.
+sys.path.insert(0, os.path.abspath(''))
+
+from utils.send_input import LEFT_PAD, RIGHT_PAD, keypress2vector, NO_INPUT
 from models.simple_lstm_nn import neural_network, one2one_model
 
 # Constants
@@ -155,5 +158,3 @@ def main():
 			cv2.destroyAllWindows()
 			save_data(images, inputs)
 			break
-
-main()

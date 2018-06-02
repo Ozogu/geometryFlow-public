@@ -23,7 +23,7 @@ keys = list(KEY_MAP.keys())
 keys.remove('esc')
 keys.remove('enter')
 
-def pressedKeys():
+def pressed_keys():
 	pressed = []
 	for k in keys:
 		if keyboard.is_pressed(k):
@@ -31,7 +31,7 @@ def pressedKeys():
 
 	return pressed
 
-def processImage(img):
+def process_image(img):
 	# To grayscale
 	img = cv2.cvtColor(np.array(img, dtype = np.uint8), cv2.COLOR_BGR2GRAY)
 	# To binary
@@ -45,7 +45,7 @@ def processImage(img):
 
 	return img
 
-def saveData(images, keyboardInputs):
+def save_data(images, keyboardInputs):
 	now = datetime.now().strftime("%Y%m%d%H%M%S")
 	# Get current path, remove 'app' folder from it. Now we have root.
 	root = '\\'.join(os.path.abspath(os.curdir).split('\\')[0:-1])
@@ -73,7 +73,7 @@ def main():
 	last_time = time.time()
 	sct = mss()
 	window = {'left': 0, 'top': 0, 'width': 800, 'height': 600}
-	windowHandle = win32gui.FindWindow(None, r'Geometry WArs: Retro Evolved')
+	windowHandle = win32gui.FindWindow(None, 'Geometry Wars: Retro Evolved')
 	images = []
 	keyboardInputs = []
 
@@ -91,20 +91,21 @@ def main():
 			print("delay " + str(now-last_time))
 			last_time = now
 
-		pressed = pressedKeys()
+		pressed = pressed_keys()
 		if DEBUG_PRESSED_KEYS:
 			print(pressed)
 		
 		sct_img = sct.grab(window)
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
-		img = processImage(img)
+		img = process_image(img)
 		images.append(img)
 		keyboardInputs.append(pressed)
 
 		cv2.imshow('Q to quit!', img)
 		if cv2.waitKey(25) & 0xFF == ord('q'):
 			cv2.destroyAllWindows()
-			saveData(images, keyboardInputs)
+			save_data(images, keyboardInputs)
 			break
 
-main()
+if __name__ == "__main__":
+   main()

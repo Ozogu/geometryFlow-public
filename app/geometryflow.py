@@ -1,4 +1,8 @@
-from sendInput import PressKey, ReleaseKey, KEY_MAP
+# Path hack.
+import sys, os
+sys.path.insert(0, os.path.abspath(''))
+
+from utils.send_input import press_key, release_key, KEY_MAP
 import win32gui
 import time
 
@@ -10,17 +14,17 @@ win32gui.SetForegroundWindow(windowHandle)
 time.sleep(.1)
 
 # Close menu screen
-PressKey(KEY_MAP['esc'])
+press_key(KEY_MAP['esc'])
 time.sleep(.1)
-ReleaseKey(KEY_MAP['esc'])
+release_key(KEY_MAP['esc'])
 
 # Play the game..
-PressKey(KEY_MAP['w'])
-PressKey(KEY_MAP['d'])
-PressKey(KEY_MAP['upArrow'])
-PressKey(KEY_MAP['leftArrow'])
+press_key(KEY_MAP['w'])
+press_key(KEY_MAP['d'])
+press_key(KEY_MAP['upArrow'])
+press_key(KEY_MAP['leftArrow'])
 time.sleep(5)
-ReleaseKey(KEY_MAP['w'])
-ReleaseKey(KEY_MAP['d'])
-ReleaseKey(KEY_MAP['upArrow'])
-ReleaseKey(KEY_MAP['leftArrow'])
+release_key(KEY_MAP['w'])
+release_key(KEY_MAP['d'])
+release_key(KEY_MAP['upArrow'])
+release_key(KEY_MAP['leftArrow'])
