@@ -1,6 +1,6 @@
-## 
+##
 ## Designed to load data outputted from commit 580c7e12 recordings!
-## 
+##
 
 import numpy as np
 import os
@@ -11,10 +11,10 @@ def exctract_date(file_name):
 
 def load_data(start_index = 0, stop_index = 0):
 	# Get current path, remove 'app' and 'utils' folder from it. Now we have root.
-	root_folder = os.path.abspath(os.curdir).split('\\')[:-2]
+	root_folder = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-	images_folder = "\\".join(root_folder + ['data'] + ['images'])
-	keyboard_folder = "\\".join(root_folder + ['data'] + ['keyboard'])
+	images_folder = os.path.join(root_folder, 'data', 'images')
+	keyboard_folder = os.path.join(root_folder, 'data', 'keyboard')
 
 	image_files = os.listdir(images_folder)
 	keyboard_files = os.listdir(keyboard_folder)
