@@ -36,9 +36,9 @@ def one2one_model(x_n, y_n):
     y = keras.layers.Dense(int(x_n / 160))(x)
     y = keras.layers.Activation(activation='relu')(y)
 
-    # # 2nd hidden layer, with less units and ReLU activation (to keep values between 0..1)
-    # y = keras.layers.Dense(int(x_n / 640))(y)
-    # y = keras.layers.Activation(activation='relu')(y)
+    # 2nd hidden layer, with less units and ReLU activation (to keep values between 0..1)
+    y = keras.layers.Dense(int(x_n / 640))(y)
+    y = keras.layers.Activation(activation='relu')(y)
 
     # Last layer with softmax activation
     y = keras.layers.Dense(y_n)(y)
@@ -80,16 +80,15 @@ def neural_network(model_func):
     images = images.reshape((nsamples,nx*ny))
     images, x_test, keyboards, y_test = train_test_split(images, keyboards, test_size=0.1)
 
-    history = m.fit(images, keyboards, epochs = 1, batch_size = 1,
+    history = m.fit(images, keyboards, epochs = 2, batch_size = 1,
                         validation_data = (x_test, y_test))
+
+    draw_graph(history)
 
     # Save model
     with open(f"{MODEL_NAME}_{nx}_{ny}.json", "w") as json_file:
         json_file.write(m.to_json())
-    m.save_weights(f"{MODEL_NAME}_{nx}_{ny}.h5")
-
-    draw_graph(history, f"{MODEL_NAME}_{nx}_{ny}")
-
+    m.save_weights(f"{MODEL_NAME}_{nx}_{ny}")
 
     return m
 

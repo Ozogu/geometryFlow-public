@@ -19,7 +19,7 @@ def load_data(start_index = 0, stop_index = 0):
 	image_files = os.listdir(images_folder)
 	keyboard_files = os.listdir(keyboard_folder)
 
-	images = np.empty((0,600,800), np.uint8)
+	images = np.array([])
 	keyboards = []
 
 	# Make sure loop stays inbounds.
@@ -38,13 +38,19 @@ def load_data(start_index = 0, stop_index = 0):
 			raise ValueError(f'There are not exactly 1 keyboard files with date: {date}!')
 		keyboard_file = keyboard_candidates[0]
 
+		print(f'loading {image_file}')
 		loaded_files = np.load(images_folder + '\\' + image_file)
 		temp = []
 		for f in loaded_files:
 			temp.append(loaded_files[f])
 
+		print(f'loading {keyboard_file}')
 		stack = np.stack(temp)
-		images = np.concatenate((images,stack), axis=0)
+		if images.size != 0:
+			images = np.concatenate((images,stack), axis=0)
+		else:
+			images = stack
+
 		with open(keyboard_folder + '\\' + keyboard_file) as kf:
 			# Strip newlines
 			keyboards += map(str.strip, kf.readlines())
