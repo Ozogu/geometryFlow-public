@@ -4,6 +4,10 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+<<<<<<< HEAD:app/models/simple_lstm_nn/simple_lstm_nn.py
+=======
+# Path hack.
+>>>>>>> e51e59113cbfd970337c31c67031ac006e365d4b:app/models/simple_lstm_nn.py
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, root)
 from utils.load_data import load_data
@@ -88,7 +92,7 @@ def neural_network(model_func):
     with open(f"{MODEL_NAME}_{nx}_{ny}.json", "w") as json_file:
         json_file.write(m.to_json())
     m.save_weights(f"{MODEL_NAME}_{nx}_{ny}.h5")
-
+    
     draw_graph(history, f"{MODEL_NAME}_{nx}_{ny}")
 
     return m
