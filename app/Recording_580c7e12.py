@@ -50,7 +50,7 @@ def save_data(images, keyboardInputs):
 	root = '\\'.join(os.path.abspath(os.curdir).split('\\')[0:-1])
 	img = f"{root}\\data\\images\\images-{now}"
 	keyboard = f"{root}\\data\\keyboard\\keyboard-{now}.txt"
-	
+
 	np.savez_compressed(img, *images)
 	f = open(keyboard,"w")
 	for k in keyboardInputs:
@@ -93,7 +93,7 @@ def main():
 		pressed = pressed_keys()
 		if DEBUG_PRESSED_KEYS:
 			print(pressed)
-		
+
 		sct_img = sct.grab(window)
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 		img = process_image(img)
