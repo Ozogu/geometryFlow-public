@@ -1,4 +1,3 @@
-import keras
 import sys, os
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
@@ -6,13 +5,11 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.layers.core import Dense, Flatten
-from keras.models import model_from_json
 
 # Path hack.
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../..'))
 from utils.load_data import load_data
-from utils.draw_graph import draw_graph
-from utils.minify_images import minify_images
+from utils.model_utility import draw_graph, load_model
 
 def convolution_model(input_shape, output_shape):
     m = Sequential()
@@ -38,16 +35,6 @@ def convolution_model(input_shape, output_shape):
 
     return m
 
-def load_model(model_name, nx, ny):
-    json_file = open(f"{model_name}_{nx}_{ny}.json", 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    loaded_model = model_from_json(loaded_model_json)
-    loaded_model.load_weights(f"{model_name}_{nx}_{ny}.h5")
-
-    return loaded_model
-
-
 if __name__ == "__main__":
     lb = LabelBinarizer()
     images, keyboards = load_data(start_index = 2)
@@ -68,7 +55,7 @@ if __name__ == "__main__":
     m.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     m.summary()
 
-    history = m.fit(images, keyboards, epochs = 150, batch_size = 1,
+    history = m.fit(images, keyboards, epochs = 1, batch_size = 1,
                         validation_data = (x_test, y_test))
 
     # Save model

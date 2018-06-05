@@ -1,8 +1,10 @@
 data
 .env
 *.pyc
+.vscode*
+*.code-workspace
 # Models may be very large. Only force push them
-app/models/*.pkl
-app/models/*.pdf
-app/models/*.json
-app/models/*.h5
+*.pkl
+*.pdf
+*.json
+*.h5

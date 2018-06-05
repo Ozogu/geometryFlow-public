@@ -11,7 +11,7 @@ from sklearn.externals import joblib
 sys.path.insert(0, os.path.abspath(''))
 
 from utils.send_input import press_key, release_key, KEY_MAP
-from Recording_580c7e12 import process_image
+from utils.image_processing import process_image
 
 def press_and_release(current_keys, last_keys):
 	if last_keys and last_keys != 'blank':

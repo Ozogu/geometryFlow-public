@@ -4,12 +4,14 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+<<<<<<< HEAD:app/models/simple_lstm_nn/simple_lstm_nn.py
+=======
 # Path hack.
+>>>>>>> e51e59113cbfd970337c31c67031ac006e365d4b:app/models/simple_lstm_nn.py
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, root)
 from utils.load_data import load_data
-from utils.draw_graph import draw_graph
-from utils.minify_images import minify_images
+from utils.model_utility import draw_graph, minify_images
 
 """
     @param x: a numpy array of controls and images for 1 second time window.
@@ -65,7 +67,7 @@ def many2one_lstm_model(t_x, t_y, n_a, input_size):
 
 def neural_network(model_func):
     lb = LabelBinarizer()
-    images, keyboards = load_data()
+    images, keyboards = load_data(stop_index=2)
     images = minify_images(240,320,images)
     nsamples, nx, ny = images.shape
 
@@ -83,17 +85,15 @@ def neural_network(model_func):
     images = images.reshape((nsamples,nx*ny))
     images, x_test, keyboards, y_test = train_test_split(images, keyboards, test_size=0.1)
 
-
-    history = m.fit(images, keyboards, epochs = 2, batch_size = 1,
+    history = m.fit(images, keyboards, epochs = 1, batch_size = 1,
                         validation_data = (x_test, y_test))
-
-    draw_graph(history)
 
     # Save model
     with open(f"{MODEL_NAME}_{nx}_{ny}.json", "w") as json_file:
         json_file.write(m.to_json())
-
-    m.save_weights(f"{MODEL_NAME}_{nx}_{ny}")
+    m.save_weights(f"{MODEL_NAME}_{nx}_{ny}.h5")
+    
+    draw_graph(history, f"{MODEL_NAME}_{nx}_{ny}")
 
     return m
 

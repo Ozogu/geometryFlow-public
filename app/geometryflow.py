@@ -13,11 +13,11 @@ import keyboard
 sys.path.insert(0, os.path.abspath(''))
 
 from utils.send_input import press_key, release_key, KEY_MAP
-from Recording_580c7e12 import process_image
-from models.convolution_nn import load_model
+from utils.recording_utility import process_image
+from utils.model_utility import load_model
 
 DEBUG_KEYBOARD = False
-DEBUG_TIMES = True
+DEBUG_TIMES = False
 
 def press_and_release(current_keys, last_keys):
 	if DEBUG_KEYBOARD: print(current_keys)
@@ -46,8 +46,8 @@ def main():
 	else:
 		raise ValueError('Geometry wars could not be found!')
 
-	lb.classes_ = np.load('models/nn_classes.npy')
-	m = load_model('models/convolution_model',240,320)
+	lb.classes_ = np.load('models/convolution_nn/nn_classes.npy')
+	m = load_model('models/convolution_nn/convolution_model',240,320)
 
 	# Close menu screen
 	press_key(KEY_MAP['esc'])

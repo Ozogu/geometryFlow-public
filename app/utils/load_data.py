@@ -10,7 +10,7 @@ def exctract_date(file_name):
 	return file_name.split('-')[1].split('.')[0]
 
 def load_data(start_index = 0, stop_index = 0):
-	# Get current path, remove 'app' and 'utils' folder from it. Now we have root.
+	# Weird monstrosity
 	root_folder = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 	images_folder = os.path.join(root_folder, 'data', 'images')
