@@ -1,7 +1,4 @@
-# Path hack.
 import sys, os
-sys.path.insert(0, os.path.abspath(''))
-
 import numpy as np
 import cv2 # pip install opencv-python
 from mss.windows import MSS as mss # pip install mss
@@ -12,6 +9,7 @@ import time
 from datetime import datetime
 import keyboard
 
+sys.path.insert(0, os.path.abspath(''))
 from utils.send_input import KEY_MAP
 
 # Constants
@@ -35,13 +33,14 @@ def process_image(img):
 	# To grayscale
 	img = cv2.cvtColor(np.array(img, dtype = np.uint8), cv2.COLOR_BGR2GRAY)
 	# To binary
-	thresh, img = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+	# thresh, img = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 
 	# Filter particles
-	closing = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
-	opening = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
-	img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, closing)
-	img = cv2.morphologyEx(img, cv2.MORPH_OPEN, opening)
+	# closing = cv2.getStructuringElement(cv2.MORPH_RECT, (4,4))
+	# opening = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (4,4))
+	# img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, closing)
+	# img = cv2.morphologyEx(img, cv2.MORPH_OPEN, opening)
+	img = cv2.resize(img, dsize=(320, 240), interpolation=cv2.INTER_CUBIC)
 
 	return img
 
@@ -51,8 +50,8 @@ def save_data(images, keyboardInputs):
 	root = '\\'.join(os.path.abspath(os.curdir).split('\\')[0:-1])
 	img = f"{root}\\data\\images\\images-{now}"
 	keyboard = f"{root}\\data\\keyboard\\keyboard-{now}.txt"
-	
-	np.savez(img, *images)
+
+	np.savez_compressed(img, *images)
 	f = open(keyboard,"w")
 	for k in keyboardInputs:
 		if k:
@@ -79,7 +78,7 @@ def main():
 
 	if windowHandle:
 		# Make sure the window is right size and position as both can vary.
-		win32gui.MoveWindow(windowHandle, 0, 0, 800, 600, True)
+		win32gui.MoveWindow(windowHandle, *window.values(), True)
 		win32gui.SetForegroundWindow(windowHandle)
 	else:
 		print('Window not found.')
@@ -94,7 +93,7 @@ def main():
 		pressed = pressed_keys()
 		if DEBUG_PRESSED_KEYS:
 			print(pressed)
-		
+
 		sct_img = sct.grab(window)
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 		img = process_image(img)
