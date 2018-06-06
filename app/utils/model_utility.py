@@ -3,10 +3,10 @@ import cv2
 import numpy as np
 from keras.models import model_from_json
 
-def minify_images(y,x,images):
+def minify_images(resolution, images):
     tmp = []
     for img in images:
-        tmp.append(cv2.resize(img, dsize=(y, x), interpolation=cv2.INTER_CUBIC))
+        tmp.append(cv2.resize(img, dsize=resolution, interpolation=cv2.INTER_CUBIC))
 
     return np.array(tmp)
 
@@ -29,11 +29,12 @@ def draw_graph(history, save_name):
 	plt.tight_layout()
 	plt.savefig(f"{save_name}.pdf", bbox_inches = "tight")
 
-def load_model(model_name, nx, ny):
-    json_file = open(f"{model_name}_{nx}_{ny}.json", 'r')
+def load_model(datapaths, model_name, nx, ny):
+    filename = datapaths.model_data / f"{model_name}_{nx}_{ny}.json"
+    json_file = open(filename, 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
-    loaded_model.load_weights(f"{model_name}_{nx}_{ny}.h5")
+    loaded_model.load_weights(datapaths.model_data / f"{model_name}_{nx}_{ny}.h5")
 
     return loaded_model

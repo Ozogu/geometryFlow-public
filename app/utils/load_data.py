@@ -9,15 +9,10 @@ import re
 def exctract_date(file_name):
 	return file_name.split('-')[1].split('.')[0]
 
-def load_data(start_index = 0, stop_index = 0):
+def load_data(datapaths, start_index = 0, stop_index = 0):
 	# Weird monstrosity
-	root_folder = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-	images_folder = os.path.join(root_folder, 'data', 'images')
-	keyboard_folder = os.path.join(root_folder, 'data', 'keyboard')
-
-	image_files = os.listdir(images_folder)
-	keyboard_files = os.listdir(keyboard_folder)
+	image_files = os.listdir(datapaths.images)
+	keyboard_files = os.listdir(datapaths.keyboard)
 
 	images = np.array([])
 	keyboards = []
@@ -39,7 +34,7 @@ def load_data(start_index = 0, stop_index = 0):
 		keyboard_file = keyboard_candidates[0]
 
 		print(f'loading {image_file}')
-		loaded_files = np.load(images_folder + '\\' + image_file)
+		loaded_files = np.load(datapaths.images / image_file)
 		temp = []
 		for f in loaded_files:
 			temp.append(loaded_files[f])
@@ -51,7 +46,7 @@ def load_data(start_index = 0, stop_index = 0):
 		else:
 			images = stack
 
-		with open(keyboard_folder + '\\' + keyboard_file) as kf:
+		with open(datapaths.keyboard / keyboard_file) as kf:
 			# Strip newlines
 			keyboards += map(str.strip, kf.readlines())
 
