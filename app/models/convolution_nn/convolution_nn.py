@@ -37,12 +37,14 @@ def convolution_model(input_shape, output_shape):
 
 if __name__ == "__main__":
     lb = LabelBinarizer()
-    images, keyboards = load_data(start_index = 2)
+    images, keyboards = load_data(start_index = 2, stop_index=4)
     # images = minify_images(240,320,images)
     nsamples, nx, ny = images.shape
 
     keyboards = lb.fit_transform(keyboards)
     np.save('nn_classes.npy', lb.classes_)
+    # for i in lb.classes_:
+    #     print(i)
     num_classes = len(lb.classes_)
     
     # Rewrite to optimize memory
@@ -55,12 +57,14 @@ if __name__ == "__main__":
     m.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     m.summary()
 
-    history = m.fit(images, keyboards, epochs = 1, batch_size = 1,
-                        validation_data = (x_test, y_test))
+    while True:
+        #TODO: append history
+        history = m.fit(images, keyboards, epochs = 10, batch_size = 32,
+                            validation_data = (x_test, y_test))
 
-    # Save model
-    with open(f"{model_name}_{nx}_{ny}.json", "w") as json_file:
-        json_file.write(m.to_json())
-    m.save_weights(f"{model_name}_{nx}_{ny}.h5")
+        # Save model
+        with open(f"{model_name}_{nx}_{ny}.json", "w") as json_file:
+            json_file.write(m.to_json())
+        m.save_weights(f"{model_name}_{nx}_{ny}.h5")
 
     draw_graph(history, f"{model_name}_{nx}_{ny}")
