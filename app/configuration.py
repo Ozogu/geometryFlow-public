@@ -6,12 +6,12 @@ from pathlib import Path
 class Config:
     def __init__(self, root):
         assert os.path.isabs(root)
-        assert os.path.split(root)[-1] == 'geometryFlow'  # FIXME: Should not hardcore
+        assert os.path.split(root)[-1] == 'geometryFlow'  # FIXME: Should not hardcode
         self._root = Path(root)
 
     @classmethod
     def default(cls):
-        return cls(os.path.abspath(os.curdir))
+        return cls(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
 
     def __repr__(self):
         return 'Config(%r)' % self._root
