@@ -20,10 +20,11 @@ class Config:
         return config
 
     def add_model(self, model_name):
-        self.model_data = config.data / model_name
-        self.model_json = config.model_data / f"{model_name}.json"
-        self.model_weights = config.model_data / f"{model_name}.h5"
-        self.model_graph = config.model_data / f"{model_name}.pdf"
+        self.model_data = self.data / model_name
+        self.model_json = self.model_data / f"{model_name}.json"
+        self.model_weights = self.model_data / f"{model_name}.h5"
+        self.model_graph = self.model_data / f"{model_name}.pdf"
+        self.model_classes = self.model_data / "nn_classes.npy"
 
     def __repr__(self):
         simple = {'Config().%s' % k:str(v) for k,v in self.__dict__.items() if not k.startswith('_')}

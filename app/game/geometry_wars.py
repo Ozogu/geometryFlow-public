@@ -10,9 +10,11 @@ class GameError(Exception): pass
 
 class GameWindow:
     def __init__(self, handle, window):
-        assert handle is not None
-        self._handle = None
-        self._window = None  # FIXME: should probably get values from the window
+        self._handle = handle
+        self._window = window  # FIXME: should probably get values from the window
+
+        assert self._handle is not None
+        assert self._window is not None
 
     @property
     def window(self):

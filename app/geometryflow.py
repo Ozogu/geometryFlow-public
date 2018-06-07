@@ -9,6 +9,9 @@ from sklearn.externals import joblib
 import cv2
 import keyboard
 
+from configuration import Config
+from game.geometry_wars import geometry_wars
+
 # Path hack.
 sys.path.insert(0, os.path.abspath(''))
 
@@ -30,24 +33,16 @@ def press_and_release(current_keys, last_keys):
 			press_key(KEY_MAP[k])
 
 def main():
-	windowHandle = win32gui.FindWindow(None, 'Geometry Wars: Retro Evolved')
+	config = Config.default()
+	config.add_model("convolution_model_320_240")
+	game = geometry_wars()
+
 	sct = mss()
-	window = {'left': 0, 'top': 0, 'width': 800, 'height': 600}
 	lb = LabelEncoder()
 	last_keys = ''
-            
-	if windowHandle:
-		# Make sure the window is right size and position as both can vary.
-		win32gui.MoveWindow(windowHandle, *window.values(), True)
-		shell = win32com.client.Dispatch("WScript.Shell")
-		shell.SendKeys('%')
-		win32gui.SetForegroundWindow(windowHandle)
-		time.sleep(.1)
-	else:
-		raise ValueError('Geometry wars could not be found!')
 
-	lb.classes_ = np.load('models/convolution_nn/nn_classes.npy')
-	m = load_model('models/convolution_nn/convolution_model',240,320)
+	lb.classes_ = np.load(config.model_classes)
+	m = load_model(config)
 
 	# Close menu screen
 	press_key(KEY_MAP['esc'])
@@ -58,7 +53,7 @@ def main():
 	last_time = time.time()
 	while True:
 		# Get image
-		sct_img = sct.grab(window)
+		sct_img = sct.grab(game.window)
 		img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 		img = process_image(img).reshape((1,240,320,1))
 

@@ -50,5 +50,4 @@ def load_data(datapaths, start_index = 0, stop_index = 0):
 			# Strip newlines
 			keyboards += map(str.strip, kf.readlines())
 
-
 	return images, keyboards

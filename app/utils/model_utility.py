@@ -29,12 +29,11 @@ def draw_graph(history, save_name):
 	plt.tight_layout()
 	plt.savefig(f"{save_name}.pdf", bbox_inches = "tight")
 
-def load_model(datapaths, model_name, nx, ny):
-    filename = datapaths.model_data / f"{model_name}_{nx}_{ny}.json"
-    json_file = open(filename, 'r')
+def load_model(datapaths):
+    json_file = open(datapaths.model_json, 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
-    loaded_model.load_weights(datapaths.model_data / f"{model_name}_{nx}_{ny}.h5")
+    loaded_model.load_weights(datapaths.model_weights)
 
     return loaded_model
