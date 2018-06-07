@@ -1,4 +1,4 @@
-
+import pprint
 import os
 from pathlib import Path
 
@@ -6,15 +6,29 @@ from pathlib import Path
 class Config:
     def __init__(self, root):
         assert os.path.isabs(root)
-        assert os.path.split(root)[-1] == 'geometryFlow'  # FIXME: Should not hardcode
         self._root = Path(root)
 
     @classmethod
     def default(cls):
-        return cls(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+        config = cls(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+        config.data = config.root / 'data'
+        config.images = config.data / 'images'
+        config.keyboard = config.data / 'keyboard'
+
+        assert str(config.root).endswith('geometryFlow')
+
+        return config
+
+    def add_model(self, model_name):
+        self.model_data = config.data / model_name
+        self.model_json = config.model_data / f"{model_name}.json"
+        self.model_weights = config.model_data / f"{model_name}.h5"
+        self.model_graph = config.model_data / f"{model_name}.pdf"
 
     def __repr__(self):
-        return 'Config(%r)' % self._root
+        simple = {'Config().%s' % k:str(v) for k,v in self.__dict__.items() if not k.startswith('_')}
+        as_string = pprint.pformat(simple, indent=4).replace('{', ' ').replace('}', ' ')
+        return 'Config(%r)\n%s' % (self._root, as_string)
 
     @property
     def root(self):
@@ -23,8 +37,6 @@ class Config:
 
 if __name__ == "__main__":
     config = Config.default()
-    print(config.root)
+    config.add_model("test_model")
 
-    config.data = config.root / 'data'
-
-    print(config.data)
+    print(config)

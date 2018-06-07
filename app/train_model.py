@@ -18,20 +18,17 @@ class Resolution(namedtuple("Resolution", "width height")):
 if __name__ == "__main__":
     # Initial configs
     config = Config.default()
-    config.data = config.root / 'data'
-    config.images = config.data / 'images'
-    config.keyboard = config.data / 'keyboard'
 
     resolution = Resolution(width=320, height=240)
 
     lb = LabelBinarizer()
-    images, keyboards = load_data(config, start_index = 2, stop_index=4)
+    images, keyboards = load_data(config, start_index = 0, stop_index=0)
     images = minify_images(resolution, images)
     nsamples, ny, nx = images.shape
 
     # Even more configs
     model_name = "convolution_model"
-    config.model_data = config.data / f"{model_name}_{nx}_{ny}"
+    config.add_model(f"{model_name}_{nx}_{ny}")
 
     keyboards = lb.fit_transform(keyboards)
     np.save('nn_classes.npy', lb.classes_)
@@ -42,10 +39,6 @@ if __name__ == "__main__":
     # Rewrite to optimize memory
     # images = images.reshape((nsamples,nx*ny))
     images, x_test, keyboards, y_test = train_test_split(images[..., np.newaxis], keyboards, test_size=0.1)
-
-    model_json = config.model_data / f"{model_name}_{nx}_{ny}.json"
-    model_weights = config.model_data / f"{model_name}_{nx}_{ny}.h5"
-    model_graph = config.model_data / f"{model_name}_{nx}_{ny}.pdf"
 
     # m = convolution_model((nx,ny,1), num_classes)
     m = load_model(config, model_name, nx, ny)
@@ -58,8 +51,8 @@ if __name__ == "__main__":
                             validation_data = (x_test, y_test))
 
         # Save model
-        with open(model_json, "w") as json_file:
+        with open(config.model_json, "w") as json_file:
             json_file.write(m.to_json())
-        m.save_weights(model_weights)
+        m.save_weights(config.model_weights)
 
-    draw_graph(history, model_graph)
+    draw_graph(history, config.model_graph)
