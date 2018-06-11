@@ -1,6 +1,6 @@
 import sys, os
 import numpy as np
-import cv2 # pip install opencv-python
+import cv2
 from mss.windows import MSS as mss # pip install mss
 from PIL import Image
 from PIL import ImageGrab

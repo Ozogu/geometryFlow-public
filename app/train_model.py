@@ -16,7 +16,7 @@ from collections import namedtuple
 class Resolution(namedtuple("Resolution", "width height")):
     @classmethod
     def from_shape(cls, shape):
-        return cls(width=shape[-1], width=shape[0])
+        return cls(width=shape[-1], height=shape[0])
 
 
 if __name__ == "__main__":
