@@ -10,12 +10,14 @@ class Config:
 
     @classmethod
     def default(cls):
-        config = cls(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+        abs_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+
+        config = cls(abs_path)
         config.data = config.root / 'data'
         config.images = config.data / 'images'
         config.keyboard = config.data / 'keyboard'
 
-        assert str(config.root).endswith('geometryFlow')
+        assert str(config.root).lower().endswith('geometryflow')
 
         return config
 

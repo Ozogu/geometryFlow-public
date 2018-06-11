@@ -27,7 +27,7 @@ if __name__ == "__main__":
     nsamples, ny, nx = images.shape
 
     # Even more configs
-    model_name = "convolution_model"
+    model_name = "convolution_model_89D"
     config.add_model(f"{model_name}_{nx}_{ny}")
 
     keyboards = lb.fit_transform(keyboards)
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     images, x_test, keyboards, y_test = train_test_split(images[..., np.newaxis], keyboards, test_size=0.1)
 
     # m = convolution_model((nx,ny,1), num_classes)
-    m = load_model(config, model_name, nx, ny)
+    m = load_model(config)
     m.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     m.summary()
 

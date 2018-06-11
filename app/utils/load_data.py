@@ -10,6 +10,8 @@ def exctract_date(file_name):
 	return file_name.split('-')[1].split('.')[0]
 
 def load_data(datapaths, start_index = 0, stop_index = 0):
+	print(f'Reading data paths:\n - {datapaths.images}\n - {datapaths.keyboard}')
+
 	# Weird monstrosity
 	image_files = os.listdir(datapaths.images)
 	keyboard_files = os.listdir(datapaths.keyboard)

@@ -21,60 +21,13 @@ KEY_MAP = {
     'space': 0x39
 }
 
-# Direction for left pad. Dictionary keys are order sensitive!
-LEFT_PAD = dict(
-    w='top',
-    s='bottom',
-    a='left',
-    d='right',
-    wd='top_right',
-    sd='bottom_right',
-    sa='bottom_left',
-    wa='top_left',
-)
-
-# Direction for right pad. Dictionary keys are order sensitive!
-RIGHT_PAD = dict(
-    up='top',
-    down='bottom',
-    left='left',
-    right='right',
-    upright='top_right',
-    downright='bottom_right',
-    downleft='bottom_left',
-    upleft='top_left',
-    )
 
 
-# Input vectors for NN
-VECTORS = dict(
-    #                      t  tr r  br b  bl l tl
-	top         =np.array((1, 0, 0, 0, 0, 0, 0, 0)),
-	bottom      =np.array((0, 0, 0, 0, 1, 0, 0, 0)),
-	left        =np.array((0, 0, 0, 0, 0, 0, 1, 0)),
-	right       =np.array((0, 0, 1, 0, 0, 0, 0, 0)),
-	top_right   =np.array((0, 1, 0, 0, 0, 0, 0, 0)),
-	top_left    =np.array((0, 0, 0, 0, 0, 0, 0, 1)),
-	bottom_right=np.array((0, 0, 0, 1, 0, 0, 0, 0)),
-	bottom_left =np.array((0, 0, 0, 0, 0, 1, 0, 0)),
-	)
 
 # Default for no input. Vector contains left pad (8), right pad (8), and bomb (1).
 NO_INPUT = np.array((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
-def keypress2vector(mapping):
-    pressed = ""
 
-    # Loop only first 4 keys. Expects keys to be in certain order
-    # so that 'pressed' is built properly.
-    for key in tuple(mapping.keys())[:4]:
-        if keyboard.is_pressed(key):
-            pressed += key
-
-    try:
-        return VECTORS[mapping[pressed]]
-    except KeyError:
-        return NO_INPUT[:8]
 
 SendInput = ctypes.windll.user32.SendInput
 
