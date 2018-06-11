@@ -12,8 +12,6 @@ from configuration import Config
 from game.geometry_wars import geometry_wars
 from game.controllers import Controller
 
-from utils.recording_utility import pressed_keys, process_image
-
 
 # Constants
 np.set_printoptions(threshold=np.nan)
@@ -64,7 +62,6 @@ def main():
 
         sct_img = sct.grab(game.window)
         img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
-        img = process_image(img)
         images.append(img)
 
         cv2.imshow('Q to quit!', img)

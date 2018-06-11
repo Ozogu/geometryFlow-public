@@ -8,19 +8,10 @@ class Joystick(metaclass=abc.ABCMeta):
         self._direction = directions
 
     @abc.abstractmethod
-    def position(self):
+    def to_vector(self, directions):
         ''' '''
 
-    @abc.abstractmethod
-    def to_vector(self):
-        ''' '''
-
-    @abc.abstractmethod
-    def turn(self, direction):
-        ''' '''
-
-
-class Joystick8D:
+class Joystick8D(Joystick):
     # Direction for left pad. Dictionary keys are order sensitive!
     LEFT_PAD = dict(
         w='top',
@@ -72,19 +63,8 @@ class Joystick8D:
     def from_right(cls):
         return cls(cls.RIGHT_PAD)
 
-    def position(self):
-        pressed = "".join([])
-
-        # Loop only first 4 keys. Expects keys to be in certain order
-        # so that 'pressed' is built properly.
-        for key in tuple(self._mapping.keys())[:4]:
-            if keyboard.is_pressed(key):
-                pressed += key
-
-        return pressed
-
-    def to_vector(self, pressed):
-        pressed = "".join(b for b in self._mapping if b in pressed.split())
+    def to_vector(self, directions):
+        pressed = "".join(b for b in self._mapping if b in directions.split())
 
         try:
             return self.VECTORS[self._mapping[pressed]]

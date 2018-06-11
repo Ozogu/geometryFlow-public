@@ -14,7 +14,9 @@ from utils.model_utility import draw_graph, load_model, minify_images
 from collections import namedtuple
 
 class Resolution(namedtuple("Resolution", "width height")):
-    pass
+    @classmethod
+    def from_shape(cls, shape):
+        return cls(width=shape[-1], width=shape[0])
 
 
 if __name__ == "__main__":

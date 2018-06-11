@@ -23,5 +23,4 @@ def process_image(img, new_size=(800,600)):
 	img = cv2.cvtColor(np.array(img, dtype = np.uint8), cv2.COLOR_BGR2GRAY)
 	img = cv2.resize(img, dsize=(320,240), interpolation=cv2.INTER_CUBIC)
 
-
 	return img
