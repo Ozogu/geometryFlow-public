@@ -34,7 +34,7 @@ def press_and_release(current_keys, last_keys):
 
 def main():
 	config = Config.default()
-	config.add_model("convolution_model_320_240")
+	config.add_model("convolution_model_89d_320_240")
 	game = geometry_wars()
 
 	sct = mss()

@@ -10,7 +10,7 @@ from datetime import datetime
 
 from configuration import Config
 from game.geometry_wars import geometry_wars
-from game.controllers import Controller89D
+from game.controllers import Controller
 
 from utils.recording_utility import pressed_keys, process_image
 
@@ -46,7 +46,7 @@ def main():
     config.train_ctrl = config.keyboard / f'keyboard-{now}.txt'
 
     game = geometry_wars()
-    controller = Controller89D()
+    controller = Controller()
 
     # Debugging delay
     last_time = time.time()

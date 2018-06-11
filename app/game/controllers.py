@@ -20,7 +20,7 @@ class Joystick(metaclass=abc.ABCMeta):
         ''' '''
 
 
-class Joystick8D(Joystick):
+class Joystick8D:
     # Direction for left pad. Dictionary keys are order sensitive!
     LEFT_PAD = dict(
         w='top',
@@ -73,7 +73,7 @@ class Joystick8D(Joystick):
         return cls(cls.RIGHT_PAD)
 
     def position(self):
-        pressed = ""
+        pressed = "".join([])
 
         # Loop only first 4 keys. Expects keys to be in certain order
         # so that 'pressed' is built properly.
@@ -83,8 +83,8 @@ class Joystick8D(Joystick):
 
         return pressed
 
-    def to_vector(self):
-        pressed = self.position()
+    def to_vector(self, pressed):
+        pressed = "".join(b for b in self._mapping if b in pressed.split())
 
         try:
             return self.VECTORS[self._mapping[pressed]]
@@ -92,7 +92,22 @@ class Joystick8D(Joystick):
             return self.NO_INPUT
 
 
-class Controller89D:
+class Classifier17D:
+    def __init__(self):
+        self._left_pad = Joystick8D.from_left()
+        self._right_pad = Joystick8D.from_right()
+
+    def __call__(self, keypresses):
+        left_ctrl = self._left_pad.to_vector(keypresses)
+        right_ctrl = self._right_pad.to_vector(keypresses)
+        bomb = (1, ) if "space" in keypresses else (0, )
+
+        combined = np.concatenate((left_ctrl, right_ctrl, bomb))
+
+        return combined
+
+
+class Controller:
     # http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
     KEY_MAP = {
         'esc': 0x01,
@@ -112,8 +127,9 @@ class Controller89D:
     KEYS.remove('esc')
     KEYS.remove('enter')
 
-    def __init__(self):
-        self._input_snapshots = []
+    def __init__(self, snapshots=None):
+        assert isinstance(snapshots, (type(None), list))
+        self._input_snapshots = snapshots or []
 
     def position(self):
         pressed = []
@@ -128,6 +144,12 @@ class Controller89D:
 
     def snapshot(self):
         self._input_snapshots.append(self.position())
+
+    def classify(self, classifier_func):
+        return np.array([classifier_func(m) for m in self._input_snapshots])
+
+        # FIXME: Why this doesn't work??
+        #return np.array(map(classifier_func, self._input_snapshots))
 
     @property
     def inputs(self):
