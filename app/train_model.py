@@ -2,10 +2,11 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 import numpy as np
 import cv2
+import time
 
 from configuration import Config
 from game.geometry_wars import geometry_wars
-from game.controllers import Controller, Classifier17D
+from game.controllers import Keyboard, Classifier17D
 
 # TODO: Import rest later
 from models.convolution_nn.convolution_nn import convolution_model
@@ -14,20 +15,22 @@ from utils.model_utility import draw_graph, load_model, minify_images
 
 from collections import namedtuple
 
+DEBUG_IMAGES = False
+
 class Resolution(namedtuple("Resolution", "width height")):
     @classmethod
     def from_shape(cls, shape):
         return cls(height=shape[0], width=shape[-1])
 
-    def to_shape(self):
+    @property
+    def shape(self):
         return (self.height, self.width)
 
-import time
+
 def process_images(images, resolution):
     def process(image):
         image = cv2.cvtColor(np.array(image, dtype = np.uint8), cv2.COLOR_BGR2GRAY)
-        image = cv2.resize(image, dsize=resolution.to_shape(), interpolation=cv2.INTER_CUBIC)
-        cv2.imshow('Q to quit!', image)
+        image = cv2.resize(image, dsize=resolution, interpolation=cv2.INTER_CUBIC)
 
         return image
 
@@ -42,21 +45,23 @@ if __name__ == "__main__":
     resolution = Resolution(width=320, height=240)
 
     images, keyboards = load_data(config, start_index = 0, stop_index=0)
-
-    for img in images:
-        cv2.imshow('Q to quit!', img)
-        time.sleep(0.1)
-
     images = process_images(images, resolution)
 
+    if DEBUG_IMAGES:
+        for img in images:
+            cv2.imshow('Q to quit!', img)
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                cv2.destroyAllWindows()
+                break
+
     nsamples, nx, ny = images.shape  # FIXME: Why this keeps switching dimensions??
-    assert (nx, ny) == resolution.to_shape()
+    assert (nx, ny) == resolution.shape
 
     # Even more configs
     model_name = "convolution_model_17D"
-    config.add_model(f"{model_name}_{nx}_{ny}")
+    config.add_model(f"{model_name}_{ny}_{nx}")
 
-    controller = Controller(keyboards)
+    controller = Keyboard(keyboards)
     output_vector_classes = controller.classify(Classifier17D())
 
     # Rewrite to optimize memory
