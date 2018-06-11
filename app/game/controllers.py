@@ -1,17 +1,28 @@
 import abc
 import keyboard
 import numpy as np
+from collections import OrderedDict
+from inputs import get_gamepad
 
+class InputDevice(metaclass=abc.ABCMeta):
+    def __init__(self, snapshots=None):
+        assert isinstance(snapshots, (type(None), list))
+        self._input_snapshots = snapshots or []
 
-class Joystick(metaclass=abc.ABCMeta):
-    def __init__(self, **directions):
-        self._direction = directions
+    # Snapshot is list of standard format input strings
+    def snapshot(self):
+        self._input_snapshots.append(self.position())
 
+    # Returns the standard format input string for the input device
     @abc.abstractmethod
-    def to_vector(self, directions):
+    def position(self):
         ''' '''
 
-class Joystick8D(Joystick):
+    @property
+    def inputs(self):
+        return self._input_snapshots
+
+class Joystick8D():
     # Direction for left pad. Dictionary keys are order sensitive!
     LEFT_PAD = dict(
         w='top',
@@ -87,7 +98,7 @@ class Classifier17D:
         return combined
 
 
-class Controller:
+class Keyboard(InputDevice):
     # http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
     KEY_MAP = {
         'esc': 0x01,
@@ -107,23 +118,21 @@ class Controller:
     KEYS.remove('esc')
     KEYS.remove('enter')
 
-    def __init__(self, snapshots=None):
-        assert isinstance(snapshots, (type(None), list))
-        self._input_snapshots = snapshots or []
-
     def position(self):
         pressed = []
         for k in self.KEYS:
             if keyboard.is_pressed(k):
                 pressed.append(k)
 
+        if pressed:
+           pressed = " ".join(sorted(pressed))
+        else:
+            pressed = "blank"
+
         return pressed
 
     def output_vector(self):
         pass
-
-    def snapshot(self):
-        self._input_snapshots.append(self.position())
 
     def classify(self, classifier_func):
         return np.array([classifier_func(m) for m in self._input_snapshots])
@@ -131,6 +140,40 @@ class Controller:
         # FIXME: Why this doesn't work??
         #return np.array(map(classifier_func, self._input_snapshots))
 
-    @property
-    def inputs(self):
-        return self._input_snapshots
+class Controller(InputDevice):
+    def __init__(self):
+        super().__init__()
+
+        # Dictionary does not neccessarily preserve order. This will.
+        self.__TEMPLATE = OrderedDict([
+            ("ABS_X", "0"),
+            ("ABS_Y", "0"),
+            ("ABS_RX", "0"),
+            ("ABS_RY", "0"),
+            ("ABS_RZ", "0")
+        ])
+
+    def position(self):
+        position = self.__TEMPLATE
+        events = get_gamepad()
+        for event in events:
+            # Bomb
+            if event.code == "ABS_RZ":
+                # Bomb triggers when state == 40
+                if event.state > 39:
+                    position[event.code] = "1"
+                else:
+                    position[event.code] = "0"
+            elif event.code in position:
+                position[event.code] = str(event.state)
+
+
+        positions = (list(position.values()))
+
+        return " ".join(positions)
+        
+
+if __name__ == "__main__":
+    controller =Controller()
+    while True:
+        print(controller.position())
