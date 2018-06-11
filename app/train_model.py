@@ -1,6 +1,7 @@
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 import numpy as np
+import cv2
 
 from configuration import Config
 from game.geometry_wars import geometry_wars
@@ -16,7 +17,22 @@ from collections import namedtuple
 class Resolution(namedtuple("Resolution", "width height")):
     @classmethod
     def from_shape(cls, shape):
-        return cls(width=shape[-1], width=shape[0])
+        return cls(height=shape[0], width=shape[-1])
+
+    def to_shape(self):
+        return (self.height, self.width)
+
+import time
+def process_images(images, resolution):
+    def process(image):
+        image = cv2.cvtColor(np.array(image, dtype = np.uint8), cv2.COLOR_BGR2GRAY)
+        image = cv2.resize(image, dsize=resolution.to_shape(), interpolation=cv2.INTER_CUBIC)
+        cv2.imshow('Q to quit!', image)
+
+        return image
+
+    images = [process(i) for i in images]
+    return np.array(images)
 
 
 if __name__ == "__main__":
@@ -25,10 +41,16 @@ if __name__ == "__main__":
 
     resolution = Resolution(width=320, height=240)
 
-    lb = LabelBinarizer()
     images, keyboards = load_data(config, start_index = 0, stop_index=0)
-    images = minify_images(resolution, images)
+
+    for img in images:
+        cv2.imshow('Q to quit!', img)
+        time.sleep(0.1)
+
+    images = process_images(images, resolution)
+
     nsamples, nx, ny = images.shape  # FIXME: Why this keeps switching dimensions??
+    assert (nx, ny) == resolution.to_shape()
 
     # Even more configs
     model_name = "convolution_model_17D"

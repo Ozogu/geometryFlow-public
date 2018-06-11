@@ -62,6 +62,7 @@ def main():
 
         sct_img = sct.grab(game.window)
         img = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
+        img = np.array(img)
         images.append(img)
 
         cv2.imshow('Q to quit!', img)
