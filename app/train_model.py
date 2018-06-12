@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     resolution = Resolution(width=320, height=240)
 
-    images, keyboards = load_data(config, start_index = 0, stop_index=0)
+    images, keyboards = load_data(config, start_index = 0, stop_index=1)
     images = process_images(images, resolution)
 
     if DEBUG_IMAGES:
@@ -75,12 +75,18 @@ if __name__ == "__main__":
         with open(config.model_json, "w") as json_file:
             json_file.write(m.to_json())
 
-    m.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    m.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    try:
+        m.load_weights(config.model_weights)
+    except OSError:
+        pass
+
     m.summary()
 
     while True:
         #TODO: append history
-        history = m.fit(images, output_vector_classes, epochs = 1, batch_size = 32,
+        history = m.fit(images, output_vector_classes, epochs = 100, batch_size = 32,
                             validation_data = (x_test, y_test))
 
         m.save_weights(config.model_weights)
