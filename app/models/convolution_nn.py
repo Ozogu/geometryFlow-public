@@ -2,7 +2,6 @@ from keras.models import Sequential
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.layers.core import Dense, Flatten
 
-
 def convolution_model(input_shape, output_shape):
     m = Sequential()
 

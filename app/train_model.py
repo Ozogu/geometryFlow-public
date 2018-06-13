@@ -9,7 +9,7 @@ from game.geometry_wars import geometry_wars
 from game.controllers import Keyboard, Classifier17D
 
 # TODO: Import rest later
-from models.convolution_nn.convolution_nn import convolution_model
+from models.convolution_nn import convolution_model
 from utils.load_data import load_data
 from utils.model_utility import draw_graph, load_model, minify_images
 
