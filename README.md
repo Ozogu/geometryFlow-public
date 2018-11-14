@@ -1,6 +1,6 @@
 # GeometryFlow
 
-GeometryFlow is a project to teach neural network to play Geometry wars rerto evolved.
+GeometryFlow is a project to teach neural network to play Geometry wars retro evolved.
 
 Currently the project is capable of:
 	Recording and modifying gameplay data from geometry wars.
